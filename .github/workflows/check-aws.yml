@@ -28,6 +28,11 @@ jobs:
           aws cloudformation validate-template \
             --template-body file://aws/github-actions-iam.yaml
 
+      - name: Validate Nagiyu VPC
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://aws/nagiyu-vpc.yaml
+
       - name: Validate Dev Nagiyu VPC
         run: |
           aws cloudformation validate-template \

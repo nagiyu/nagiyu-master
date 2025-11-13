@@ -13,6 +13,9 @@ jobs:
   deploy-aws:
     runs-on: ubuntu-latest
 
+    env:
+      ENVIRONMENT: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,7 +27,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Deploy Nagiyu VPC
+        if: env.ENVIRONMENT == 'production'
+        run: |
+          aws cloudformation deploy \
+            --template-file aws/nagiyu-vpc.yaml \
+            --stack-name nagiyu-master-nagiyu-vpc
+
       - name: Deploy Dev Nagiyu VPC
+        if: env.ENVIRONMENT == 'development'
         run: |
           aws cloudformation deploy \
             --template-file aws/dev-nagiyu-vpc.yaml \
