@@ -5,13 +5,13 @@ Resources:
   GitHubActionsUser:
     Type: AWS::IAM::User
     Properties:
-      UserName: github-actions-user
-      Path: /
+      UserName: nagiyu-master-github-actions-user
+      Path: /nagiyu-master/
 
   GitHubActionsPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: github-actions
+      PolicyName: nagiyu-master-github-actions
       Users:
         - !Ref GitHubActionsUser
       PolicyDocument:
