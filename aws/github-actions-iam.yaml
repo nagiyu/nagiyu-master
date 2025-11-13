@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: IAM User and Policy for GitHub Actions
+
+Resources:
+  GitHubActionsUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: nagiyu-master-github-actions-user
+      Path: /nagiyu-master/
+
+  GitHubActionsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: nagiyu-master-github-actions
+      Users:
+        - !Ref GitHubActionsUser
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - cloudformation:*
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - ec2:*
+            Resource: "*"

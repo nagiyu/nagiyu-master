@@ -1,1 +1,1 @@
-# Nagiyu Template
+# Nagiyu Master
