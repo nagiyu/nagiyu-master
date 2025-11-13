@@ -1,15 +1,16 @@
-name: Check AWS
+name: Deploy AWS
 
 on:
-  pull_request:
-    branches:
-      - develop
+  push:
+    # branches:
+    #   - master
+    #   - develop
     paths:
       - 'aws/**'
   workflow_dispatch:
 
 jobs:
-  check-aws:
+  deploy-aws:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,12 +24,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Validate GitHub Actions IAM
+      - name: Deploy Dev Nagiyu VPC
         run: |
-          aws cloudformation validate-template \
-            --template-body file://aws/github-actions-iam.yaml
-
-      - name: Validate Dev Nagiyu VPC
-        run: |
-          aws cloudformation validate-template \
-            --template-body file://aws/dev-nagiyu-vpc.yaml
+          aws cloudformation deploy \
+            --template-file aws/dev-nagiyu-vpc.yaml \
+            --stack-name nagiyu-master-dev-nagiyu-vpc

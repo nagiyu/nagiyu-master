@@ -23,5 +23,5 @@ Resources:
             Resource: "*"
           - Effect: Allow
             Action:
-              - iam:*
+              - ec2:*
             Resource: "*"
