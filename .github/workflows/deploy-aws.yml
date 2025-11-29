@@ -2,9 +2,9 @@ name: Deploy AWS
 
 on:
   push:
-    branches:
-      - master
-      - develop
+    # branches:
+    #   - master
+    #   - develop
     paths:
       - 'aws/**'
   workflow_dispatch:

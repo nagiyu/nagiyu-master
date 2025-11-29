@@ -65,6 +65,30 @@ Resources:
         - Key: Project
           Value: niconico-mylist-assistant
 
+  CodecConverterBatchSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref NagiyuVPC
+      CidrBlock: 10.0.3.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: codec-converter-batch-subnet-1
+        - Key: Project
+          Value: codec-converter
+
+  CodecConverterBatchSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref NagiyuVPC
+      CidrBlock: 10.0.4.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: codec-converter-batch-subnet-2
+        - Key: Project
+          Value: codec-converter
+
   Subnet1RouteAssoc:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -77,6 +101,18 @@ Resources:
       SubnetId: !Ref NMARegisterBatchSubnet2
       RouteTableId: !Ref PublicRouteTable
 
+  CodecConverterBatchSubnet1RouteAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref CodecConverterBatchSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  CodecConverterBatchSubnet2RouteAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref CodecConverterBatchSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
 Outputs:
   VpcId:
     Description: VPC ID
@@ -87,4 +123,9 @@ Outputs:
   Subnet2Id:
     Description: NMA Register Batch Subnet 2 ID
     Value: !Ref NMARegisterBatchSubnet2
-
+  CodecConverterBatchSubnet1Id:
+    Description: Codec Converter Batch Subnet 1 ID
+    Value: !Ref CodecConverterBatchSubnet1
+  CodecConverterBatchSubnet2Id:
+    Description: Codec Converter Batch Subnet 2 ID
+    Value: !Ref CodecConverterBatchSubnet2
