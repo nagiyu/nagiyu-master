@@ -8,16 +8,53 @@ Parameters:
     AllowedPattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$
     ConstraintDescription: Must be a valid domain name
 
-  SubjectAlternativeNames:
+  IncludeRootInSAN:
+    Type: String
+    Description: Include the root domain in SubjectAlternativeNames (true/false)
+    AllowedValues:
+      - "true"
+      - "false"
+    Default: "true"
+
+  IncludeWildcard:
+    Type: String
+    Description: Include wildcard subdomain (*.example.com) in SubjectAlternativeNames (true/false)
+    AllowedValues:
+      - "true"
+      - "false"
+    Default: "true"
+
+  AdditionalSANs:
     Type: CommaDelimitedList
-    Description: Additional domain names for the certificate (e.g., *.example.com)
+    Description: Additional domain names for the certificate (optional, comma-separated)
     Default: ""
 
 Conditions:
-  HasSubjectAlternativeNames: !Not
+  IncludeRootInSANCondition: !Equals
+    - !Ref IncludeRootInSAN
+    - "true"
+
+  IncludeWildcardCondition: !Equals
+    - !Ref IncludeWildcard
+    - "true"
+
+  HasAdditionalSANs: !Not
     - !Equals
-      - !Join ["", !Ref SubjectAlternativeNames]
+      - !Join ["", !Ref AdditionalSANs]
       - ""
+
+  # Combination conditions for building SANs list
+  RootAndWildcard: !And
+    - !Condition IncludeRootInSANCondition
+    - !Condition IncludeWildcardCondition
+
+  RootOnlyNoWildcard: !And
+    - !Condition IncludeRootInSANCondition
+    - !Not [!Condition IncludeWildcardCondition]
+
+  WildcardOnlyNoRoot: !And
+    - !Not [!Condition IncludeRootInSANCondition]
+    - !Condition IncludeWildcardCondition
 
 Resources:
   NagiyuCertificate:
@@ -25,9 +62,19 @@ Resources:
     Properties:
       DomainName: !Ref RootDomain
       SubjectAlternativeNames: !If
-        - HasSubjectAlternativeNames
-        - !Ref SubjectAlternativeNames
-        - !Ref AWS::NoValue
+        - RootAndWildcard
+        - - !Ref RootDomain
+          - !Sub "*.${RootDomain}"
+        - !If
+          - RootOnlyNoWildcard
+          - - !Ref RootDomain
+          - !If
+            - WildcardOnlyNoRoot
+            - - !Sub "*.${RootDomain}"
+            - !If
+              - HasAdditionalSANs
+              - !Ref AdditionalSANs
+              - !Ref AWS::NoValue
       ValidationMethod: DNS
       Tags:
         - Key: Name
