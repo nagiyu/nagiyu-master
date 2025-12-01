@@ -38,6 +38,7 @@ nagiyu の各システム共通で利用する AWS ACM（AWS Certificate Manager
 | `data-model.md` | データモデル定義。ACM Certificate、CloudFormation Stack、DNS Record 等のエンティティ |
 | `quickstart.md` | クイックスタートガイド。デプロイから証明書発行までの簡易手順 |
 | `contracts/outputs.schema.json` | CloudFormation Outputs の JSON Schema。必須フィールドと型を定義 |
+| `contracts/README.md` | Outputs スキーマの目的、検証手順、使用例を記載 |
 
 ## 関連リソース（実装対象）
 
@@ -63,3 +64,4 @@ MVP 達成後に追加を検討する機能:
 - [spec.md](./spec.md) - 詳細な機能仕様
 - [tasks.md](./tasks.md) - タスク一覧と進捗管理
 - [quickstart.md](./quickstart.md) - クイックスタートガイド
+- [contracts/README.md](./contracts/README.md) - Outputs スキーマ検証ガイド
