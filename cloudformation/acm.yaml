@@ -26,7 +26,7 @@ Parameters:
 
   AdditionalSANs:
     Type: CommaDelimitedList
-    Description: Additional domain names for the certificate (optional, comma-separated)
+    Description: Additional domain names for the certificate (optional, comma-separated). Note - only used when IncludeRootInSAN and IncludeWildcard are both false.
     Default: ""
 
 Conditions:
