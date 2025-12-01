@@ -34,3 +34,34 @@ Resources:
           Value: nagiyu-acm-certificate
         - Key: Project
           Value: nagiyu
+
+Outputs:
+  RecordName:
+    Description: DNS validation record name for the primary domain. Note - For wildcard SANs (e.g., *.example.com), the same validation record typically validates both root and wildcard.
+    Value: !GetAtt NagiyuCertificate.DomainValidationOptions.0.ResourceRecord.Name
+    Export:
+      Name: !Sub "${AWS::StackName}-RecordName"
+
+  RecordType:
+    Description: DNS validation record type for the ACM certificate (CNAME)
+    Value: !GetAtt NagiyuCertificate.DomainValidationOptions.0.ResourceRecord.Type
+    Export:
+      Name: !Sub "${AWS::StackName}-RecordType"
+
+  RecordValue:
+    Description: DNS validation record value for the primary domain
+    Value: !GetAtt NagiyuCertificate.DomainValidationOptions.0.ResourceRecord.Value
+    Export:
+      Name: !Sub "${AWS::StackName}-RecordValue"
+
+  DomainName:
+    Description: The primary domain name for the certificate
+    Value: !Ref RootDomain
+    Export:
+      Name: !Sub "${AWS::StackName}-DomainName"
+
+  CertificateArn:
+    Description: ARN of the ACM certificate
+    Value: !Ref NagiyuCertificate
+    Export:
+      Name: !Sub "${AWS::StackName}-CertificateArn"
