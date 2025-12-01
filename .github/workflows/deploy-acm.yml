@@ -29,10 +29,58 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy ACM CloudFormation Stack
+      - name: Validate ROOT_DOMAIN secret
         run: |
-          aws cloudformation deploy \
+          if [ -z "${{ secrets.ROOT_DOMAIN }}" ]; then
+            echo "::error::ROOT_DOMAIN secret is not set"
+            exit 1
+          fi
+          # Validate domain format (basic check)
+          if ! echo "${{ secrets.ROOT_DOMAIN }}" | grep -qE '^[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$'; then
+            echo "::error::ROOT_DOMAIN does not appear to be a valid domain format"
+            exit 1
+          fi
+          echo "✅ ROOT_DOMAIN secret validation passed"
+
+      - name: Deploy ACM CloudFormation Stack
+        id: deploy
+        run: |
+          echo "::group::Deploying ACM CloudFormation Stack"
+          echo "Starting deployment of ACM stack..."
+          echo "Template: cloudformation/acm.yaml"
+          echo "Stack Name: nagiyu-acm"
+          
+          if aws cloudformation deploy \
             --template-file cloudformation/acm.yaml \
             --stack-name nagiyu-acm \
-            --parameter-overrides RootDomain=${{ secrets.ROOT_DOMAIN }} \
-            --no-fail-on-empty-changeset
+            --parameter-overrides "RootDomain=${{ secrets.ROOT_DOMAIN }}" \
+            --no-fail-on-empty-changeset; then
+            echo "::endgroup::"
+            echo "✅ Deployment completed successfully"
+            echo "deployment_status=success" >> "$GITHUB_OUTPUT"
+          else
+            echo "::endgroup::"
+            echo "❌ Deployment failed"
+            echo "deployment_status=failure" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+      - name: Output Stack Information
+        if: success()
+        run: |
+          echo "::group::Stack Outputs"
+          echo "Fetching CloudFormation stack outputs..."
+          aws cloudformation describe-stacks \
+            --stack-name nagiyu-acm \
+            --query 'Stacks[0].Outputs' \
+            --output table || echo "::warning::Unable to fetch stack outputs - stack may still be deploying or may not exist"
+          echo "::endgroup::"
+
+      - name: Log Deployment Result
+        if: always()
+        run: |
+          if [ "${{ steps.deploy.outputs.deployment_status }}" = "success" ]; then
+            echo "::notice::ACM CloudFormation stack deployment completed successfully"
+          else
+            echo "::error::ACM CloudFormation stack deployment failed"
+          fi
