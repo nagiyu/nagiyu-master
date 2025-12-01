@@ -25,3 +25,16 @@ Resources:
             Action:
               - ec2:*
             Resource: "*"
+          - Effect: Allow
+            Action:
+              - acm:RequestCertificate
+              - acm:DescribeCertificate
+              - acm:ListCertificates
+              - acm:AddTagsToCertificate
+              - acm:DeleteCertificate
+              - acm:ListTagsForCertificate
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - sts:GetCallerIdentity
+            Resource: "*"
