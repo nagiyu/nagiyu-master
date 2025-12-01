@@ -1,0 +1,35 @@
+name: Deploy ACM
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'cloudformation/acm.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-acm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy ACM CloudFormation Stack
+        run: |
+          aws cloudformation deploy \
+            --template-file cloudformation/acm.yaml \
+            --stack-name nagiyu-acm \
+            --parameter-overrides RootDomain=${{ secrets.ROOT_DOMAIN }} \
+            --no-fail-on-empty-changeset
