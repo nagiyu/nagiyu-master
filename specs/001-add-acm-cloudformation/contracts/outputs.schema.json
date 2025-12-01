@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ACM CloudFormation Outputs",
+  "type": "object",
+  "properties": {
+    "RecordName": { "type": "string" },
+    "RecordType": { "type": "string", "enum": ["CNAME", "TXT"] },
+    "RecordValue": { "type": "string" },
+    "DomainName": { "type": "string" },
+    "CertificateArn": { "type": "string" },
+    "TTL": { "type": "integer" },
+    "Description": { "type": "string" }
+  },
+  "required": ["RecordName", "RecordType", "RecordValue", "DomainName", "CertificateArn"],
+  "additionalProperties": false
+}
