@@ -1,4 +1,36 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: ACM Certificate for nagiyu
 
-Resources: {}
+Parameters:
+  RootDomain:
+    Type: String
+    Description: The root domain name for the certificate (e.g., example.com)
+    AllowedPattern: ^[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$
+    ConstraintDescription: Must be a valid domain name
+
+  SubjectAlternativeNames:
+    Type: CommaDelimitedList
+    Description: Additional domain names for the certificate (e.g., *.example.com)
+    Default: ""
+
+Conditions:
+  HasSubjectAlternativeNames: !Not
+    - !Equals
+      - !Join ["", !Ref SubjectAlternativeNames]
+      - ""
+
+Resources:
+  NagiyuCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref RootDomain
+      SubjectAlternativeNames: !If
+        - HasSubjectAlternativeNames
+        - !Ref SubjectAlternativeNames
+        - !Ref AWS::NoValue
+      ValidationMethod: DNS
+      Tags:
+        - Key: Name
+          Value: nagiyu-acm-certificate
+        - Key: Project
+          Value: nagiyu
