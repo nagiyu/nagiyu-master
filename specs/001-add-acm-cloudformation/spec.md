@@ -141,6 +141,7 @@
 - Q: 成功基準 `SC-001` の起点/終点定義 → A: `起点 = GitHub Actions ジョブ開始, 終点 = ACM が ISSUED`（Option A を採用）。
 - Q: CloudFormation Outputs の具体フォーマット → A: `RecordName, RecordType, RecordValue, DomainName, CertificateArn を必須出力`（Option A を採用）。
 - Q: IAM の最小権限 → A: `cloudformation:CreateStack/Update/Describe, acm:RequestCertificate/Describe, iam:PassRole (限定ARN), sts:GetCallerIdentity`（最小アクション群を採用）。
+- Q: IAM の最小権限 → A: `cloudformation:CreateStack/Update/Describe, acm:RequestCertificate/Describe, iam:PassRole を全 Role に許可 (Resource: "*") , sts:GetCallerIdentity`（ユーザー選択: 全 Role に対する `iam:PassRole` を許可）。
 - Q: 証明書発行リージョンの扱い（`us-east-1` の可変性） → A: 常に `us-east-1` にて発行する（固定、テンプレートで上書き不可）。
 
 ## Deliverables
