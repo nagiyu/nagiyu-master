@@ -2,10 +2,10 @@ name: Deploy ACM
 
 on:
   push:
-    # branches:
-    #   - master
-    #   - develop
-    #   - 'release/**'
+    branches:
+      - master
+      - develop
+      - 'release/**'
     paths:
       - 'cloudformation/acm.yaml'
       - '.github/workflows/deploy-acm.yml'
