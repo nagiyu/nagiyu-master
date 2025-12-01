@@ -101,7 +101,7 @@ CloudFormation テンプレートを S3 から取得する場合に必要。
         "cloudformation:DescribeStacks",
         "cloudformation:DescribeStackEvents"
       ],
-      "Resource": "arn:aws:cloudformation:us-east-1:ACCOUNT_ID:stack/nagiyu-acm-*"
+      "Resource": "arn:aws:cloudformation:us-east-1:ACCOUNT_ID:stack/PROJECT_NAME-acm-*"
     },
     {
       "Sid": "ACMCertificateManagement",
@@ -120,7 +120,7 @@ CloudFormation テンプレートを S3 から取得する場合に必要。
 
 **注記**:
 - `ACCOUNT_ID` は実際の AWS アカウント ID に置き換えること
-- スタック名のプレフィックス `nagiyu-acm-*` は運用に合わせて調整すること
+- スタック名のプレフィックス `PROJECT_NAME-acm-*` は実際のプロジェクト名（例: `nagiyu-acm-*`）に置き換えること
 - ACM の `Resource` は `*` だが、これは ACM API の仕様上リソースレベルの制限が難しいため
 
 ## 運用時の追加権限
@@ -138,6 +138,10 @@ CloudFormation テンプレートを S3 から取得する場合に必要。
   "Resource": "*"
 }
 ```
+
+**セキュリティ推奨事項**:
+- 可能であれば `Resource` をワイルドカード `*` ではなく、特定のスタック ARN（例: `arn:aws:cloudformation:us-east-1:ACCOUNT_ID:stack/PROJECT_NAME-acm-*`）に限定する
+- 証明書削除は慎重に行い、本番環境では削除権限を別ロールに分離することを検討する
 
 ## 最小権限の原則
 
@@ -158,6 +162,7 @@ GitHub Actions で使用する場合、以下の Secrets を設定する:
 - デプロイ専用の IAM ユーザーを作成し、上記の最小権限のみを付与する
 - アクセスキーは定期的にローテーションする
 - 可能であれば、GitHub Actions の OIDC 認証への移行を検討する（本仕様では Secrets を使用）
+  - OIDC の利点: 長期間有効なアクセスキーの保存が不要、トークンは自動的に期限切れ、より細かい条件制御が可能
 
 ## 参照
 
